@@ -1,5 +1,5 @@
 creation_rules:
-  - path_regex: secrets/.*\.yaml$
+  - path_regex: .*\.yaml$
     key_groups:
       - age:
           # Admin workstation key — generate with: age-keygen -o ~/.config/sops/age/keys.txt
@@ -9,6 +9,6 @@ creation_rules:
           # Per-host keys — after each node's first boot, run:
           #   ssh-keyscan <hostname-or-ip> | grep ed25519 | ssh-to-age
           # and replace the placeholder below with the output.
-          - age1rukxq8su6t3e4djapcxqxs8gkcsry3ekuuha5xte99ewu0mqu5lu2q3g0zmy
-          - age1TODO_K3S_AGENT
-          - age1TODO_K3S_AGENT_2
+          - age1rvkxq8sw6t3e4djapcxqxs8gkcsry3ekwha5xte99ew0nqw5lu2q3g6zmy
+          # - age1TODO_K3S_AGENT
+          # - age1TODO_K3S_AGENT_2
