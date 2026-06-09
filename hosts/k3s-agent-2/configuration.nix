@@ -5,7 +5,7 @@
   boot.loader.efi.canTouchEfiVariables = true;
 
   boot.initrd.availableKernelModules = [
-    "hv_vmbus" "hv_storvsc" "hv_blkvsc" "hv_netvsc" "sd_mod"
+    "hv_vmbus" "hv_storvsc" "hv_netvsc" "sd_mod"
   ];
 
   virtualisation.hypervGuest.enable = true;
