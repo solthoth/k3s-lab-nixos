@@ -78,12 +78,14 @@ age-keygen -o ~/.config/sops/age/keys.txt
 
 Default specs (overridable): 4 GB RAM, 30 GB disk, 2 vCPUs, Generation 2, Secure Boot off.
 
-### Step 3 — Install each node (Hyper-V Manager console)
+### Step 3 — Partition disk and collect host age key (Hyper-V Manager console)
 
 Boot from the ISO. The live environment runs as the `nixos` user with passwordless `sudo` — disk and install commands require root.
 
+> **Do not run `nixos-install` yet.** sops-nix decrypts secrets during activation, so `secrets/secrets.yaml` must exist and be encrypted for this host before the install runs. Steps 3–5 get you there.
+
 ```bash
-# Switch to root for the whole session (avoids prefixing every command with sudo)
+# Switch to root for the whole session
 sudo -i
 
 # Clone this repo using HTTPS — the live ISO has no SSH keys.
@@ -95,46 +97,62 @@ cd /tmp/repo
 # --extra-experimental-features is required; nix-command and flakes are off by default on the ISO.
 nix --extra-experimental-features 'nix-command flakes' run github:nix-community/disko -- --mode disko ./hosts/<hostname>/disko.nix
 
-# Install NixOS
-nixos-install --flake .#<hostname>
+# Pre-generate the SSH host key into the installed system's /etc/ssh.
+# sops-nix derives the age key from this file — it must exist before nixos-install.
+mkdir -p /mnt/etc/ssh
+ssh-keygen -t ed25519 -f /mnt/etc/ssh/ssh_host_ed25519_key -N ""
+
+# Print the age public key — copy this value, you will need it in Step 4.
+nix-shell -p ssh-to-age --run "cat /mnt/etc/ssh/ssh_host_ed25519_key.pub | ssh-to-age"
 ```
 
-### Step 4 — Collect host age public keys (dev container)
+**Pause here** and complete Steps 4 and 5 in the dev container before continuing.
 
-After each node boots for the first time, retrieve its SSH host key and convert it to an age public key:
+### Step 4 — Update `.sops.yaml` with host age keys (dev container)
 
-```bash
-ssh-keyscan k3s-server  | grep ed25519 | ssh-to-age
-ssh-keyscan k3s-agent   | grep ed25519 | ssh-to-age
-ssh-keyscan k3s-agent-2 | grep ed25519 | ssh-to-age
-```
-
-Paste each output into `secrets/.sops.yaml`, replacing the `age1TODO_*` placeholders.
+Paste the age public key printed in Step 3 into `secrets/.sops.yaml`, replacing the matching `age1TODO_*` placeholder. Repeat for each node before creating the secrets file.
 
 ### Step 5 — Create and encrypt the k3s token (dev container)
 
 ```bash
-# Create the encrypted secrets file interactively
+# Install sops if not already available
+nix-shell -p sops
+
+# Create the encrypted secrets file interactively (sops encrypts on save)
 sops secrets/secrets.yaml
 ```
 
-Add this content (sops will encrypt it on save):
+Add this content, replacing the value with a random string:
 
 ```yaml
-k3s-token: "$(openssl rand -hex 32)"
+k3s-token: "change-me-to-a-long-random-string"
 ```
 
-Commit `secrets/secrets.yaml` — it is safe to version-control once encrypted.
-
-### Step 6 — Deploy final configuration (dev container)
+Then commit and push so the live ISO can pull it:
 
 ```bash
-nixos-rebuild switch --flake .#k3s-server  --target-host root@<SERVER_IP>
-nixos-rebuild switch --flake .#k3s-agent   --target-host root@<AGENT_IP>
-nixos-rebuild switch --flake .#k3s-agent-2 --target-host root@<AGENT2_IP>
+git add secrets/.sops.yaml secrets/secrets.yaml
+git commit -m "chore: add encrypted k3s secrets"
+git push
 ```
 
-k3s will start automatically. Verify the cluster from the server:
+### Step 6 — Run nixos-install (Hyper-V Manager console)
+
+Back on the live ISO:
+
+```bash
+cd /tmp/repo
+git pull
+
+# Now install — secrets.yaml exists and is encrypted for this host
+nixos-install --flake .#<hostname>
+```
+
+Repeat Steps 3–6 for each node. All nodes share the same `secrets/secrets.yaml`, so once created you only need to re-encrypt it with each new host key (`sops updatekeys secrets/secrets.yaml`) rather than recreating it.
+
+### Step 7 — Verify the cluster (dev container)
+
+Once all nodes are running:
 
 ```bash
 ssh admin@<SERVER_IP> kubectl get nodes
