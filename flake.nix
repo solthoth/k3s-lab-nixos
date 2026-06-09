@@ -7,30 +7,27 @@
       url = "github:nix-community/disko";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-  };
-
-  outputs = { self, nixpkgs, disko, ... }: {
-    nixosConfigurations = {
-      k3s-server = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          disko.nixosModules.disko
-          ./hosts/k3s-server/configuration.nix
-          ./hosts/k3s-server/disko.nix
-          ./modules/common.nix
-          ./modules/k3s.nix
-        ];
-      };
-      k3s-agent = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        modules = [
-          disko.nixosModules.disko
-          ./hosts/k3s-agent/configuration.nix
-          ./hosts/k3s-agent/disko.nix
-          ./modules/common.nix
-          ./modules/k3s.nix
-        ];
-      };
+    sops-nix = {
+      url = "github:Mic92/sops-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
+
+  outputs = { self, nixpkgs, disko, sops-nix, ... }:
+    let
+      sharedModules = host: [
+        disko.nixosModules.disko
+        sops-nix.nixosModules.sops
+        ./hosts/${host}/configuration.nix
+        ./hosts/${host}/disko.nix
+        ./modules/common.nix
+        ./modules/k3s.nix
+      ];
+    in {
+      nixosConfigurations = {
+        k3s-server  = nixpkgs.lib.nixosSystem { system = "x86_64-linux"; modules = sharedModules "k3s-server";  };
+        k3s-agent   = nixpkgs.lib.nixosSystem { system = "x86_64-linux"; modules = sharedModules "k3s-agent";   };
+        k3s-agent-2 = nixpkgs.lib.nixosSystem { system = "x86_64-linux"; modules = sharedModules "k3s-agent-2"; };
+      };
+    };
 }
