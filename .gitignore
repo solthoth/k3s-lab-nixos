@@ -1,0 +1,20 @@
+# Nix build results
+result
+result-*
+
+# graphify output
+graphify-out/
+*.dot
+*.png
+*.svg
+*.pdf
+
+# Editor / IDE
+.direnv/
+.envrc
+*.swp
+*.swo
+.DS_Store
+
+# Local Settings
+*.local.json

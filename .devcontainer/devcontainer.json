@@ -12,7 +12,8 @@
       "extensions": [
         "jnoortheen.nix-ide",
         "arrterian.nix-env-selector",
-        "anthropic.claude-code"
+        "anthropic.claude-code",
+        "yusifaliyevpro.vscicons"
       ],
       "settings": {
         "nix.enableLanguageServer": true,
@@ -27,5 +28,8 @@
       }
     }
   },
-  "postCreateCommand": "nix-env -iA nixpkgs.nil nixpkgs.nixfmt-rfc-style && echo 'Dev environment ready. Run: nix flake check'"
+  "remoteEnv": {
+    "PATH": "${containerEnv:PATH}:/home/vscode/.local/bin"
+  },
+  "postCreateCommand": "bash .devcontainer/setup.sh"
 }
