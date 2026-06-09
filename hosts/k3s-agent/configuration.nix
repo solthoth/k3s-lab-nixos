@@ -19,5 +19,5 @@
     serverAddr = "https://k3s-server.local:6443";
   };
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.11";
 }

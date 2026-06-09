@@ -80,15 +80,20 @@ Default specs (overridable): 4 GB RAM, 30 GB disk, 2 vCPUs, Generation 2, Secure
 
 ### Step 3 — Install each node (Hyper-V Manager console)
 
-Boot from the ISO, then run the following for each host (substitute `k3s-server`, `k3s-agent`, `k3s-agent-2`):
+Boot from the ISO. The live environment runs as the `nixos` user with passwordless `sudo` — disk and install commands require root.
 
 ```bash
-# Clone this repo onto the live ISO environment
-nix-shell -p git --run "git clone <your-repo-url> /mnt/repo"
-cd /mnt/repo
+# Switch to root for the whole session (avoids prefixing every command with sudo)
+sudo -i
+
+# Clone this repo using HTTPS — the live ISO has no SSH keys.
+# Use the HTTPS URL (https://github.com/...) not the SSH URL (git@github.com:...).
+nix-shell -p git --run "git clone https://github.com/<your-org>/<your-repo> /tmp/repo"
+cd /tmp/repo
 
 # Partition and format the disk
-nix run github:nix-community/disko -- --mode disko ./hosts/<hostname>/disko.nix
+# --extra-experimental-features is required; nix-command and flakes are off by default on the ISO.
+nix --extra-experimental-features 'nix-command flakes' run github:nix-community/disko -- --mode disko ./hosts/<hostname>/disko.nix
 
 # Install NixOS
 nixos-install --flake .#<hostname>
@@ -202,6 +207,6 @@ nixos-rebuild switch --flake .#k3s-agent-2 --target-host root@<AGENT2_IP>
 
 | Input | Version |
 |-------|---------|
-| nixpkgs | nixos-24.11 |
+| nixpkgs | nixos-25.11 |
 | disko | latest (follows nixpkgs) |
 | sops-nix | latest (follows nixpkgs) |

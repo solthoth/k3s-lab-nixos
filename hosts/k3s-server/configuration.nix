@@ -14,5 +14,5 @@
 
   mylab.k3s.role = "server";
 
-  system.stateVersion = "24.11";
+  system.stateVersion = "25.11";
 }
