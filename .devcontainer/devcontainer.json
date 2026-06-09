@@ -11,7 +11,8 @@
     "vscode": {
       "extensions": [
         "jnoortheen.nix-ide",
-        "arrterian.nix-env-selector"
+        "arrterian.nix-env-selector",
+        "anthropic.claude-code"
       ],
       "settings": {
         "nix.enableLanguageServer": true,
