@@ -25,7 +25,7 @@ in {
       role = cfg.role;
       tokenFile = config.sops.secrets."k3s-token".path;
       serverAddr = lib.mkIf (cfg.role == "agent") cfg.serverAddr;
-      extraFlags = lib.mkIf (cfg.role == "server") "--write-kubeconfig-mode=0644";
+      extraFlags = lib.mkIf (cfg.role == "server") "--write-kubeconfig-mode=0644 --tls-san=k3s-server.local";
     };
 
     environment.interactiveShellInit = ''
