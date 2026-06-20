@@ -28,7 +28,7 @@ in {
       extraFlags = lib.mkIf (cfg.role == "server") "--write-kubeconfig-mode=0644";
     };
 
-    environment.interactiveShellInit = lib.mkIf (cfg.role == "server") ''
+    environment.interactiveShellInit = ''
       export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
     '';
 
