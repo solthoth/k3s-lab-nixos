@@ -46,4 +46,22 @@
   time.timeZone = "UTC";
 
   nix.settings.tarball-ttl = 0;
+
+  systemd.services.nixos-upgrade = {
+    description = "NixOS auto-upgrade";
+    serviceConfig.Type = "oneshot";
+    script = ''
+      /run/current-system/sw/bin/nixos-rebuild switch \
+        --flake github:solthoth/k3s-lab-nixos#$(cat /etc/hostname)
+    '';
+  };
+
+  systemd.timers.nixos-upgrade = {
+    wantedBy = [ "timers.target" ];
+    timerConfig = {
+      OnBootSec = "5min";
+      OnUnitActiveSec = "15min";
+      Unit = "nixos-upgrade.service";
+    };
+  };
 }
