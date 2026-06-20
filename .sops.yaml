@@ -11,7 +11,11 @@ creation_rules:
           # Per-host keys — after each node's first boot, run:
           #   ssh-keyscan <hostname-or-ip> | grep ed25519 | ssh-to-age
           # and replace the placeholder below with the output.
+          # k3s-server
           - age1q5gfp06pa7l5gps763vaqgwmdm60j57309zwlrzqd9egutl535hq739gld
+          # k3s-agent
+          - age1ucvgvq7wkguztvtdl7y5zq630u50hr2znqk7f4apq4pku7mcd9ns77g7uw
+          # k3s-agent-2
           # - age1TODO_K3S_SERVER
           # - age1TODO_K3S_AGENT
           # - age1TODO_K3S_AGENT_2
