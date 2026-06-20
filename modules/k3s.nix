@@ -28,6 +28,10 @@ in {
       extraFlags = lib.mkIf (cfg.role == "server") "--write-kubeconfig-mode=0644";
     };
 
+    environment.sessionVariables = lib.mkIf (cfg.role == "server") {
+      KUBECONFIG = "/etc/rancher/k3s/k3s.yaml";
+    };
+
     # k3s inter-node communication ports
     networking.firewall = {
       allowedTCPPorts =
