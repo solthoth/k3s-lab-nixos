@@ -16,6 +16,7 @@ creation_rules:
           # k3s-agent
           - age1ucvgvq7wkguztvtdl7y5zq630u50hr2znqk7f4apq4pku7mcd9ns77g7uw
           # k3s-agent-2
+          - age1dtu0r9qejmsmad24cm4n0qsdrm6k50yupkvqc86fl07cvhjfxptshs5aac
           # - age1TODO_K3S_SERVER
           # - age1TODO_K3S_AGENT
           # - age1TODO_K3S_AGENT_2
