@@ -88,6 +88,11 @@ Boot from the ISO. The live environment runs as the `nixos` user with passwordle
 # Switch to root for the whole session
 sudo -i
 
+# Setup sshd for local access
+## Optional
+passwd nixos
+systemctl start sshd
+
 # Clone this repo using HTTPS — the live ISO has no SSH keys.
 # Use the HTTPS URL (https://github.com/...) not the SSH URL (git@github.com:...).
 nix-shell -p git --run "git clone https://github.com/<your-org>/<your-repo> /tmp/repo"
