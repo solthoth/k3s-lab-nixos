@@ -44,4 +44,6 @@
 
   networking.firewall.enable = true;
   time.timeZone = "UTC";
+
+  nix.settings.tarball-ttl = 0;
 }
