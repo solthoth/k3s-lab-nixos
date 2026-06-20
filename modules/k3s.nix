@@ -28,9 +28,9 @@ in {
       extraFlags = lib.mkIf (cfg.role == "server") "--write-kubeconfig-mode=0644";
     };
 
-    environment.etc."profile.d/k3s-kubeconfig.sh" = lib.mkIf (cfg.role == "server") {
-      text = "export KUBECONFIG=/etc/rancher/k3s/k3s.yaml\n";
-    };
+    environment.interactiveShellInit = lib.mkIf (cfg.role == "server") ''
+      export KUBECONFIG=/etc/rancher/k3s/k3s.yaml
+    '';
 
     # k3s inter-node communication ports
     networking.firewall = {
