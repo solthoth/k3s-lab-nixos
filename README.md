@@ -95,7 +95,7 @@ systemctl start sshd
 
 # Clone this repo using HTTPS — the live ISO has no SSH keys.
 # Use the HTTPS URL (https://github.com/...) not the SSH URL (git@github.com:...).
-nix-shell -p git --run "git clone https://github.com/<your-org>/<your-repo> /tmp/repo"
+nix-shell -p git --run "git clone https://github.com/solthoth/k3s-lab-nixos /tmp/repo"
 cd /tmp/repo
 
 # Partition and format the disk
