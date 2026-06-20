@@ -2,9 +2,9 @@ param(
     [Parameter(Mandatory)] [string]$VMName,
     [string]$ISOPath = "C:\NixOS\ISOs\nixos-minimal-25.11.10470.0c88e1f2bdb9-x86_64-linux.iso",
     [string]$SwitchName = "K3sLabSwitch",
-    [int64]$MemoryGB = 4,
-    [int64]$DiskGB = 30,
-    [int]$CPUs = 2
+    [int64]$MemoryGB = 8,
+    [int64]$DiskGB = 60,
+    [int]$CPUs = 4
 )
 
 function Write-Log {
